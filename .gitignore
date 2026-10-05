@@ -1,18 +1,268 @@
-# Build and Release Folders
-bin-debug/
-bin-release/
-[Oo]bj/
-[Bb]in/
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mytube Nexus Elite - Sentient AI Music Entity</title>
+    <style>
+        :root {
+            --bg-color: #060609;
+            --card-bg: #101018;
+            --text-color: #f8fafc;
+            --accent-cyan: #00f2fe;
+            --accent-purple: #9333ea;
+            --accent-gold: #fbbf24;
+            --hover-color: #1a1a26;
+            --subtext: #94a3b8;
+            --border-color: rgba(0, 242, 254, 0.2);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container { width: 100%; max-width: 480px; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        h1 {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.5rem; margin: 0; font-weight: 900;
+        }
+        .header-controls { display: flex; gap: 8px; align-items: center; }
+        select, .pro-badge-btn {
+            background: var(--card-bg); color: var(--text-color);
+            border: 1px solid var(--border-color); padding: 6px 10px;
+            border-radius: 10px; font-size: 0.85rem; outline: none; cursor: pointer;
+        }
+        .pro-badge-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #000; font-weight: bold; border: none;
+        }
+        .ad-banner {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 8px 12px; border-radius: 10px;
+            text-align: center; font-size: 0.73rem; color: var(--subtext); margin-bottom: 16px;
+        }
+        .ad-banner span { color: var(--accent-gold); font-weight: bold; cursor: pointer; text-decoration: underline; }
+        .ai-console, .dj-panel, .player-card {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 16px; margin-bottom: 16px;
+        }
+        .ai-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.85rem; font-weight: bold; color: var(--accent-cyan); }
+        .ai-status { font-size: 0.8rem; color: var(--subtext); line-height: 1.4; }
+        .search-box {
+            width: 100%; padding: 12px 16px; background: var(--card-bg);
+            border: 1px solid var(--border-color); border-radius: 12px;
+            color: var(--text-color); font-size: 0.95rem; margin-bottom: 16px; box-sizing: border-box; outline: none;
+        }
+        .player-card { text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+        .song-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 4px; }
+        .song-category { font-size: 0.75rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; font-weight: 600; }
+        audio { width: 100%; margin-top: 8px; }
+        .dj-title { font-size: 0.9rem; font-weight: bold; margin-bottom: 10px; color: var(--accent-purple); display: flex; justify-content: space-between; }
+        .controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+        .btn-ctrl {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-color); padding: 10px; border-radius: 10px; font-size: 0.8rem; cursor: pointer; font-weight: 600;
+        }
+        .btn-ctrl:hover { background: var(--accent-purple); }
+        .slider-group { margin-top: 10px; font-size: 0.75rem; color: var(--subtext); }
+        .slider-group input { width: 100%; accent-color: var(--accent-cyan); }
+        .section-title { font-size: 0.9rem; font-weight: bold; margin-bottom: 10px; color: var(--subtext); display: flex; justify-content: space-between; }
+        ul { list-style: none; padding: 0; margin: 0; }
+        li {
+            background: var(--card-bg); margin-bottom: 8px; padding: 12px 14px;
+            border-radius: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+        li:hover { background: var(--hover-color); border-color: var(--border-color); }
+        .song-name { font-weight: bold; font-size: 0.9rem; }
+        .song-origin { font-size: 0.7rem; color: var(--subtext); margin-top: 2px; }
+        .badge { font-size: 0.65rem; background: rgba(0, 242, 254, 0.1); color: var(--accent-cyan); padding: 3px 6px; border-radius: 6px; font-weight: 600; }
+    </style>
+</head>
+<body>
 
-# Other files and folders
-.settings/
+<div class="container">
+    <header>
+        <h1 id="app-title">Mytube Nexus</h1>
+        <div class="header-controls">
+            <button class="pro-badge-btn" onclick="openPricingModal()">👑 PRO & Rodina</button>
+            <select id="lang-select" onchange="changeLanguage(this.value)">
+                <option value="cs">🇨🇿 CZ</option>
+                <option value="en">🇬🇧 EN</option>
+                <option value="es">🇪🇸 ES</option>
+                <option value="de">🇩🇪 DE</option>
+            </select>
+        </div>
+    </header>
 
-# Executables
-*.swf
-*.air
-*.ipa
-*.apk
+    <div id="ad-container" class="ad-banner">
+        ✨ <b>Režim zdarma bez opruzů</b> (Žádné vyskakovací reklamy). <span onclick="openPricingModal()">Aktivovat PRO nebo Rodinný balíček</span>
+    </div>
 
-# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
-# should NOT be excluded as they contain compiler settings and other important
-# information for Eclipse / Flash Builder.
+    <div class="ai-console">
+        <div class="ai-header">
+            <span>🧠 NEXUS AI SENTINEL CORE</span>
+            <span id="ai-mode-status" style="color: var(--accent-gold);">Shield: Active / Free</span>
+        </div>
+        <div id="ai-message" class="ai-status">
+            „Kybernetický štít Nexus Sentinel aktivní. Přehrávání na pozadí připraveno.“
+        </div>
+        <div style="margin-top: 10px;">
+            <select id="ai-genre" onchange="nexusChangeGenre(this.value)" style="width: 100%; font-size: 0.75rem;">
+                <option value="House">✨ AI Genre: House & Club</option>
+                <option value="Techno">⚡ AI Genre: Techno & Dark</option>
+                <option value="Pop">🎵 AI Genre: CZ/SK & Global Pop</option>
+                <option value="Rock">🎸 AI Genre: Rock & Live Anthems</option>
+                <option value="Chillout">🌿 AI Genre: Ambient & Chillout</option>
+            </select>
+        </div>
+    </div>
+
+    <input type="text" id="search-input" class="search-box" placeholder="🔍 Hledat českou či světovou hudbu..." oninput="filterSongs()">
+
+    <div class="player-card">
+        <div id="current-title" class="song-title">Vyberte skladbu ze seznamu</div>
+        <div id="current-cat" class="song-category">[AI Generated] Background Ready</div>
+        <audio id="audio-player" controls></audio>
+    </div>
+
+    <div class="dj-panel">
+        <div class="dj-title">
+            <span>🎛️ PRO DJ STUDIO & PAD</span>
+            <span id="dj-status" style="font-size: 0.7rem; color: var(--subtext);">Připraveno</span>
+        </div>
+        <div class="controls-grid">
+            <button class="btn-ctrl" onclick="triggerPad('Kick')">🥁 Kick Beat</button>
+            <button class="btn-ctrl" onclick="triggerPad('Snare')">💥 Snare Hit</button>
+            <button class="btn-ctrl" onclick="triggerPad('Laser')">🚀 FX Laser</button>
+            <button class="btn-ctrl" onclick="triggerPad('Airhorn')">📯 Party Horn</button>
+        </div>
+        <div class="slider-group">
+            <label>Crossfader / Mix Balance: <span id="cf-val">50%</span></label>
+            <input type="range" min="0" max="100" value="50" oninput="updateCrossfader(this.value)">
+        </div>
+    </div>
+
+    <div class="section-title">
+        <span id="playlist-header">Doporučená knihovna (ČR & Svět)</span>
+        <span class="badge">EU AI Act Compliant</span>
+    </div>
+    
+    <ul id="playlist">
+        <li onclick="playSong('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', 'Český letní open-air hit', 'Česká republika • Pop')">
+            <div>
+                <div class="song-name">🎵 Český letní open-air hit</div>
+                <div class="song-origin">[AI Synthesized] CZ Pop</div>
+            </div>
+            <span class="badge">CZ</span>
+        </li>
+        <li onclick="playSong('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', 'Global Cyber Electronic', 'Celosvětové • Electronic')">
+            <div>
+                <div class="song-name">🌍 Global Cyber Electronic</div>
+                <div class="song-origin">[AI Synthesized] Electronic Club</div>
+            </div>
+            <span class="badge">World</span>
+        </li>
+        <li onclick="playSong('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', 'Pražská půlnoční kytara', 'Česká republika • Acoustic')">
+            <div>
+                <div class="song-name">🎸 Pražská půlnoční kytara</div>
+                <div class="song-origin">[AI Synthesized] Acoustic Live</div>
+            </div>
+            <span class="badge">CZ</span>
+        </li>
+    </ul>
+</div>
+
+<script>
+    let isPro = false;
+
+    // Nexus Sentinel Behavioral Shield
+    window.addEventListener('mousemove', () => { window.nexusHumanScore = (window.nexusHumanScore || 0) + 1; });
+    window.addEventListener('touchstart', () => { window.nexusHumanScore = (window.nexusHumanScore || 0) + 1; });
+
+    function playSong(url, title, category) {
+        const player = document.getElementById('audio-player');
+        document.getElementById('current-title').innerText = title;
+        document.getElementById('current-cat').innerText = `[AI Generated] ${category}`;
+        player.src = url;
+        player.play();
+        
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: title,
+                artist: category,
+                album: 'Mytube Nexus Elite 2026'
+            });
+            navigator.mediaSession.setActionHandler('play', () => player.play());
+            navigator.mediaSession.setActionHandler('pause', () => player.pause());
+        }
+        
+        document.getElementById('ai-message').innerText = `„Přehrávám: ${title}. Hudba běží na pozadí, ochrana Sentinel aktivní.“`;
+    }
+
+    function nexusChangeGenre(genre) {
+        document.getElementById('ai-message').innerText = `„AI entita přešla na žánr: ${genre}. Vše bez přerušování.“`;
+    }
+
+    function triggerPad(type) {
+        document.getElementById('dj-status').innerText = `Spuštěno: ${type} FX`;
+        setTimeout(() => { document.getElementById('dj-status').innerText = "Připraveno"; }, 1500);
+    }
+
+    function updateCrossfader(val) {
+        document.getElementById('cf-val').innerText = val + '%';
+    }
+
+    function openPricingModal() {
+        let choice = prompt("Vyberte předplatné Mytube Nexus:\n\n1 - PRO Jednotlivec (1 € / měsíc)\n2 - Rodinný balíček (Žena, děti, děda, babička – hlavní účet 1 € + 0.5 € za každého člena měsíčně)\n\nZadejte číslo 1 nebo 2:");
+        
+        if (choice === "1") {
+            isPro = true;
+            document.getElementById('ad-container').style.display = 'none';
+            document.getElementById('ai-mode-status').innerText = "PRO Jednotlivec aktivní (1 € / měsíc)";
+            document.getElementById('ai-mode-status').style.color = "var(--accent-cyan)";
+            alert("🎉 Úspěšně aktivován měsíční PRO tarif pro jednotlivce za 1 €!");
+        } else if (choice === "2") {
+            isPro = true;
+            document.getElementById('ad-container').style.display = 'none';
+            document.getElementById('ai-mode-status').innerText = "Rodinný Nexus aktivní (1 € + 0.5 € / člen)";
+            document.getElementById('ai-mode-status').style.color = "var(--accent-cyan)";
+            alert("👨‍👩‍👧‍👦 Rodinný balíček aktivován! Žena, děti, děda i babička mají plný přístup bez reklam za 0.5 € měsíčně za osobu.");
+        }
+    }
+
+    function filterSongs() {
+        let input = document.getElementById('search-input').value.toLowerCase();
+        let list = document.getElementById('playlist');
+        let items = list.getElementsByTagName('li');
+        for (let i = 0; i < items.length; i++) {
+            let text = items[i].innerText.toLowerCase();
+            items[i].style.display = text.includes(input) ? "flex" : "none";
+        }
+    }
+
+    function changeLanguage(lang) {
+        const translations = {
+            cs: { title: "Mytube Nexus", placeholder: "🔍 Hledat českou či světovou hudbu..." },
+            en: { title: "Mytube Nexus", placeholder: "🔍 Search Czech & global music..." },
+            es: { title: "Mytube Nexus", placeholder: "🔍 Buscar música..." },
+            de: { title: "Mytube Nexus", placeholder: "🔍 Musik suchen..." }
+        };
+        const t = translations[lang] || translations.cs;
+        document.getElementById('app-title').innerText = t.title;
+        document.getElementById('search-input').placeholder = t.placeholder;
+    }
+</script>
+
+</body>
+</html>
